@@ -3,6 +3,7 @@ import Phone from './phone.js'
 import Address from './address.js'
 import { DateTime } from 'luxon'
 import * as relations from '@adonisjs/lucid/types/relations'
+import Sale from './sale.js'
 
 export default class Client extends BaseModel {
   @column({ isPrimary: true })
@@ -19,6 +20,9 @@ export default class Client extends BaseModel {
 
   @hasMany(() => Address)
   public addresses: relations.HasMany<typeof Address>
+
+  @hasMany(() => Sale)
+  public sales: relations.HasMany<typeof Sale>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
