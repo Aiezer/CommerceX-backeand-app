@@ -14,7 +14,6 @@ export const PhoneFactory = factory
   })
   .build()
 
-// Factory de Address
 export const AddressFactory = factory
   .define(Address, ({ faker }) => {
     return {
@@ -29,7 +28,6 @@ export const AddressFactory = factory
   })
   .build()
 
-// Factory de Client
 export const ClientFactory = factory
   .define(Client, ({ faker }) => {
     return {

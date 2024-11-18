@@ -19,7 +19,7 @@ export default class extends BaseSchema {
       table.string('state').notNullable()
       table.string('zip_code').notNullable()
       table.string('complement').nullable()
-      table.timestamps(true) // Cria automaticamente `createdAt` e `updatedAt`
+      table.timestamps(true)
     })
   }
 

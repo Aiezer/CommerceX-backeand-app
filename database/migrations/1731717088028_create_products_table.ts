@@ -10,7 +10,7 @@ export default class extends BaseSchema {
       table.text('description').nullable()
       table.decimal('price', 10, 2).notNullable()
       table.boolean('deleted').defaultTo(false)
-      table.timestamps(true) // Cria automaticamente `createdAt` e `updatedAt`
+      table.timestamps(true)
     })
   }
 

@@ -2,7 +2,6 @@ import factory from '@adonisjs/lucid/factories'
 import Product from '#models/product'
 import { DateTime } from 'luxon'
 
-// Factory de Product
 export const ProductFactory = factory
   .define(Product, ({ faker }) => {
     return {

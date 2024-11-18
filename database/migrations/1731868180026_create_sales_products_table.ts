@@ -14,7 +14,7 @@ export default class SalesProducts extends BaseSchema {
         .inTable('products')
         .onDelete('CASCADE')
       table.integer('quantity').notNullable()
-      table.timestamps(true) // Cria automaticamente `createdAt` e `updatedAt`
+      table.timestamps(true)
     })
   }
 
