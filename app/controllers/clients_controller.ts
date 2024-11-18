@@ -16,6 +16,9 @@ export default class ClientsController {
       .where('id', params.id)
       .preload('phones')
       .preload('addresses')
+      .preload('sales', (salesQuery) => {
+        salesQuery.preload('salesProducts')
+      })
       .first()
 
     if (!client) {
@@ -36,7 +39,6 @@ export default class ClientsController {
 
       console.log('Client saved:', client)
 
-      // Cria o telefone, se fornecido
       if (payload.phones) {
         const phone = new Phone()
         phone.merge({ number: payload.phones, clientId: client.id })
@@ -45,7 +47,6 @@ export default class ClientsController {
         console.log('Phone saved:', phone)
       }
 
-      // Cria o endereço, se fornecido
       if (payload.addresses) {
         const address = new Address()
         address.merge({ ...payload.addresses, clientId: client.id })
@@ -69,7 +70,6 @@ export default class ClientsController {
       client.useTransaction(trx)
       await client.save()
 
-      // Atualiza ou cria o telefone, se fornecido
       if (payload.phones) {
         let phones = await Phone.findBy('clientId', client.id, { client: trx })
         if (!phones) {
@@ -80,7 +80,6 @@ export default class ClientsController {
         await phones.save()
       }
 
-      // Atualiza ou cria o endereço, se fornecido
       if (payload.addresses) {
         let addresses = await Address.findBy('clientId', client.id, { client: trx })
         if (!addresses) {
