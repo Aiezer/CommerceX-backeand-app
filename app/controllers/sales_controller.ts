@@ -2,7 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 
 import Database from '@adonisjs/lucid/services/db'
 import Sale from '#models/sale'
-import SalesProducts from '#models/sales_products'
+import SaledProducts from '#models/saled_products'
 import { DateTime } from 'luxon'
 import { calculateTotalPrice } from '../utils/calculate_total_price.js'
 
@@ -24,7 +24,7 @@ export default class SalesController {
       )
 
       for (const prod of products) {
-        await SalesProducts.create(
+        await SaledProducts.create(
           {
             saleId: sale.id,
             productId: prod.productId,

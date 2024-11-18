@@ -11,13 +11,22 @@ export default class ClientsController {
     return response.json(clients)
   }
 
-  async show({ params, response }: HttpContext) {
+  async show({ params, request, response }: HttpContext) {
+    const { id } = params
+    const month = request.qs().month
+    const year = request.qs().year
+
     const client = await Client.query()
-      .where('id', params.id)
+      .where('id', id)
       .preload('phones')
       .preload('addresses')
       .preload('sales', (salesQuery) => {
-        salesQuery.preload('salesProducts')
+        if (month && year) {
+          salesQuery
+            .whereRaw('MONTH(sale_date) = ?', [month])
+            .whereRaw('YEAR(sale_date) = ?', [year])
+        }
+        salesQuery.preload('saledProducts').orderBy('saleDate', 'desc')
       })
       .first()
 
@@ -94,5 +103,26 @@ export default class ClientsController {
     })
 
     return clientData
+  }
+
+  async destroy({ params, response }: HttpContext) {
+    const trx = await Database.transaction()
+    try {
+      const client = await Client.findOrFail(params.id, { client: trx })
+
+      // Remove as vendas associadas (necessário apenas se o cascade delete não estiver configurado)
+      await client.related('sales').query().delete()
+
+      // Exclui o cliente
+      await client.delete()
+
+      await trx.commit()
+      return response
+        .status(200)
+        .json({ message: 'Cliente e vendas associadas excluídos com sucesso.' })
+    } catch (error) {
+      await trx.rollback()
+      return response.status(500).json({ error: 'Erro ao excluir cliente', details: error.message })
+    }
   }
 }

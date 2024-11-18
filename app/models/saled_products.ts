@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
+import { BaseModel, column, belongsTo, hasOne } from '@adonisjs/lucid/orm'
 import * as relations from '@adonisjs/lucid/types/relations'
 import Sale from './sale.js'
 import Product from './product.js'
 
-export default class SalesProducts extends BaseModel {
+export default class SaledProducts extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
@@ -20,8 +20,8 @@ export default class SalesProducts extends BaseModel {
   @belongsTo(() => Sale)
   public sale: relations.BelongsTo<typeof Sale>
 
-  @belongsTo(() => Product)
-  public product: relations.BelongsTo<typeof Product>
+  @hasOne(() => Product)
+  public product: relations.HasOne<typeof Product>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
