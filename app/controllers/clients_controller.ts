@@ -39,21 +39,17 @@ export default class ClientsController {
 
   async store({ request }: HttpContext) {
     const payload = await request.validateUsing(createClientValidator)
-
     const clientData = await Database.transaction(async (trx) => {
       const client = new Client()
       client.merge(payload)
       client.useTransaction(trx)
       await client.save()
 
-      console.log('Client saved:', client)
-
       if (payload.phones) {
         const phone = new Phone()
         phone.merge({ number: payload.phones, clientId: client.id })
         phone.useTransaction(trx)
         await phone.save()
-        console.log('Phone saved:', phone)
       }
 
       if (payload.addresses) {
@@ -61,7 +57,6 @@ export default class ClientsController {
         address.merge({ ...payload.addresses, clientId: client.id })
         address.useTransaction(trx)
         await address.save()
-        console.log('Address saved:', address)
       }
 
       return client
@@ -110,10 +105,8 @@ export default class ClientsController {
     try {
       const client = await Client.findOrFail(params.id, { client: trx })
 
-      // Remove as vendas associadas (necessário apenas se o cascade delete não estiver configurado)
       await client.related('sales').query().delete()
 
-      // Exclui o cliente
       await client.delete()
 
       await trx.commit()
