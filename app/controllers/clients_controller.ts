@@ -1,5 +1,5 @@
 import { HttpContext } from '@adonisjs/core/http'
-import { createClientValidator, updateClientValidator } from '#validators/client_validator'
+import { createClientValidator, updateClientValidator } from '#validators/client'
 import Client from '#models/client'
 import Phone from '#models/phone'
 import Address from '#models/address'
@@ -15,7 +15,6 @@ export default class ClientsController {
   async show({ params, request, response }: HttpContext) {
     const { id } = params
     const { month, year } = request.qs()
-
     const client = await Client.query()
       .where('id', id)
       .preload('phones')
@@ -40,14 +39,14 @@ export default class ClientsController {
   async store({ request, response }: HttpContext) {
     const payload = await request.validateUsing(createClientValidator)
 
-    const transaction = await Database.transaction()
+    const trx = await Database.transaction()
     try {
-      const client = await this.saveClient(payload, transaction)
+      const client = await this.saveClient(payload, trx)
+      await trx.commit()
 
-      await transaction.commit()
       return response.status(201).json(client)
     } catch (error) {
-      await transaction.rollback()
+      await trx.rollback()
       return response.status(500).json({ error: 'Erro ao criar cliente', details: error.message })
     }
   }
@@ -55,19 +54,17 @@ export default class ClientsController {
   async update({ request, params, response }: HttpContext) {
     const payload = await request.validateUsing(updateClientValidator)
 
-    const transaction = await Database.transaction()
+    const trx = await Database.transaction()
     try {
-      const client = await Client.findOrFail(params.id, { client: transaction })
+      const client = await Client.findOrFail(params.id, { client: trx })
       client.merge(payload)
-      client.useTransaction(transaction)
-      await client.save()
 
-      await this.syncRelatedEntities(client, payload, transaction)
+      const updatedClient = await this.saveClient(client, trx)
+      await trx.commit()
 
-      await transaction.commit()
-      return response.status(200).json(client)
+      return response.status(200).json(updatedClient)
     } catch (error) {
-      await transaction.rollback()
+      await trx.rollback()
       return response
         .status(500)
         .json({ error: 'Erro ao atualizar cliente', details: error.message })
@@ -75,32 +72,28 @@ export default class ClientsController {
   }
 
   async destroy({ params, response }: HttpContext) {
-    const transaction = await Database.transaction()
+    const trx = await Database.transaction()
     try {
-      const client = await Client.findOrFail(params.id, { client: transaction })
+      const client = await Client.findOrFail(params.id, { client: trx })
       await client.related('sales').query().delete()
       await client.delete()
 
-      await transaction.commit()
+      await trx.commit()
       return response
         .status(200)
         .json({ message: 'Cliente e vendas associadas excluídos com sucesso.' })
     } catch (error) {
-      await transaction.rollback()
+      await trx.rollback()
       return response.status(500).json({ error: 'Erro ao excluir cliente', details: error.message })
     }
   }
 
-  /**
-   * Cria ou atualiza um cliente e sincroniza as entidades relacionadas.
-   */
-  private async saveClient(payload: any, transaction: any) {
-    const client = new Client()
-    client.merge(payload)
-    client.useTransaction(transaction)
+  private async saveClient(payload: any, trx: any) {
+    const client = payload instanceof Client ? payload : new Client().merge(payload)
+    client.useTransaction(trx)
     await client.save()
 
-    await this.syncRelatedEntities(client, payload, transaction)
+    await this.syncRelatedEntities(client, payload, trx)
     return client
   }
 

@@ -1,4 +1,5 @@
 import { HttpContext } from '@adonisjs/core/http'
+import { createProductValidator, updateProductValidator } from '#validators/product'
 import Product from '#models/product'
 
 export default class ProductsController {
@@ -12,55 +13,62 @@ export default class ProductsController {
   }
 
   async show({ params, response }: HttpContext) {
-    const product = await Product.query().where('deleted', false).where('id', params.id).first()
+    try {
+      const product = await this.findProductById(params.id)
 
-    if (!product) {
-      return response.notFound({ error: 'Produto não encontrado' })
+      return response.json(product)
+    } catch (error) {
+      return this.handleError(response, 'Produto não encontrado')
     }
-
-    return response.json(product)
   }
+
   async store({ request, response }: HttpContext) {
-    const data = request.only(['name', 'description', 'price'])
+    const payload = await request.validateUsing(createProductValidator)
 
     try {
-      const product = await Product.create(data)
+      const product = await Product.create(payload)
       return response.status(201).json(product)
     } catch (error) {
-      return response.status(500).json({ error: 'Erro ao criar produto', details: error.message })
+      return this.handleError(response, 'Erro ao criar produto', error)
     }
   }
 
   async update({ params, request, response }: HttpContext) {
-    const data = request.only(['name', 'description', 'price'])
-
-    const product = await Product.find(params.id)
-    if (!product) {
-      return response.notFound({ error: 'Produto não encontrado' })
-    }
+    const payload = await request.validateUsing(updateProductValidator)
 
     try {
-      product.merge(data)
+      const product = await this.findProductById(params.id)
+      product.merge(payload)
       await product.save()
 
       return response.status(200).json(product)
     } catch (error) {
-      return response
-        .status(500)
-        .json({ error: 'Erro ao atualizar produto', details: error.message })
+      return this.handleError(response, 'Erro ao atualizar produto', error)
     }
   }
 
   async destroy({ params, response }: HttpContext) {
-    const product = await Product.find(params.id)
+    try {
+      const product = await this.findProductById(params.id)
+      product.deleted = true
+      await product.save()
 
-    if (!product) {
-      return response.notFound({ error: 'Produto não encontrado' })
+      return response.status(200).json({ message: 'Produto excluído com sucesso' })
+    } catch (error) {
+      return this.handleError(response, 'Erro ao excluir produto', error)
     }
+  }
 
-    product.deleted = true
-    await product.save()
+  private async findProductById(id: number) {
+    return Product.query().where('deleted', false).where('id', id).firstOrFail()
+  }
 
-    return response.status(200).json({ message: 'Produto excluído com sucesso' })
+  private handleError(response: any, message: string, error?: any) {
+    console.error(error)
+
+    return response.status(500).json({
+      error: message,
+      details: error ? error.message : 'Erro inesperado',
+    })
   }
 }
