@@ -8,6 +8,7 @@ export default class SaledProducts extends BaseSchema {
       table.increments('id')
       table.integer('sale_id').unsigned().references('id').inTable('sales').onDelete('CASCADE')
       table.integer('product_id').unsigned().references('id').inTable('products')
+      table.float('unit_price').notNullable()
       table.integer('quantity').notNullable()
       table.timestamps(true)
     })

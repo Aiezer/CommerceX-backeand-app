@@ -26,7 +26,7 @@ export default class Address extends BaseModel {
   declare clientId: number
 
   @belongsTo(() => Client)
-  public client: relations.BelongsTo<typeof Client>
+  public client!: relations.BelongsTo<typeof Client>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

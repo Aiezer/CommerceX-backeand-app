@@ -18,10 +18,10 @@ export default class Sale extends BaseModel {
   declare saleDate: DateTime
 
   @belongsTo(() => Client)
-  public client: relations.BelongsTo<typeof Client>
+  public client!: relations.BelongsTo<typeof Client>
 
   @hasMany(() => SaledProducts)
-  public saledProducts: relations.HasMany<typeof SaledProducts>
+  public saledProducts!: relations.HasMany<typeof SaledProducts>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

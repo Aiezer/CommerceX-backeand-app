@@ -7,22 +7,22 @@ import Sale from './sale.js'
 
 export default class Client extends BaseModel {
   @column({ isPrimary: true })
-  public id: number
+  public id: number | undefined
 
   @column()
-  public name: string
+  public name: string | undefined
 
   @column()
-  public cpf: string
+  public cpf: string | undefined
 
   @hasMany(() => Phone)
-  public phones: relations.HasMany<typeof Phone>
+  public phones!: relations.HasMany<typeof Phone>
 
   @hasMany(() => Address)
-  public addresses: relations.HasMany<typeof Address>
+  public addresses!: relations.HasMany<typeof Address>
 
   @hasMany(() => Sale)
-  public sales: relations.HasMany<typeof Sale>
+  public sales!: relations.HasMany<typeof Sale>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

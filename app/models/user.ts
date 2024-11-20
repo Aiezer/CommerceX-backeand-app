@@ -32,7 +32,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare updatedAt: DateTime | null
 
   @hasMany(() => Client)
-  public clients: relations.HasMany<typeof Client>
+  public clients!: relations.HasMany<typeof Client>
 
   static accessTokens = DbAccessTokensProvider.forModel(User)
 }

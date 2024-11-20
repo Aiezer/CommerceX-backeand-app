@@ -15,13 +15,16 @@ export default class SaledProducts extends BaseModel {
   declare productId: number
 
   @column()
+  declare unitPrice: number
+
+  @column()
   declare quantity: number
 
   @belongsTo(() => Sale)
-  public sale: relations.BelongsTo<typeof Sale>
+  public sale!: relations.BelongsTo<typeof Sale>
 
   @hasOne(() => Product)
-  public product: relations.HasOne<typeof Product>
+  public product!: relations.HasOne<typeof Product>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
