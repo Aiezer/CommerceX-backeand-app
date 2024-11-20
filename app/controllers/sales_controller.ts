@@ -1,10 +1,9 @@
 import type { HttpContext } from '@adonisjs/core/http'
-
 import Database from '@adonisjs/lucid/services/db'
 import Sale from '#models/sale'
 import SaledProducts from '#models/saled_products'
+import Product from '#models/product'
 import { DateTime } from 'luxon'
-import { calculateTotalPrice } from '../utils/calculate_total_price.js'
 
 export default class SalesController {
   public async store({ request, response }: HttpContext) {
@@ -12,27 +11,49 @@ export default class SalesController {
     try {
       const { clientId, products } = request.only(['clientId', 'products'])
 
-      const totalPrice = await calculateTotalPrice(products)
+      const productIds = products.map((prod: SaledProducts) => prod.productId)
+      const foundProducts = await Product.query()
+        .whereIn('id', productIds)
+        .andWhere('deleted', false)
 
+      if (foundProducts.length !== productIds.length) {
+        const missingIds = productIds.filter(
+          (id: number) => !foundProducts.some((product) => product.id === id)
+        )
+        throw new Error(`Produtos com IDs ${missingIds.join(', ')} não foram encontrados`)
+      }
+
+      const saledProductsData = products.map((prod: SaledProducts) => {
+        const product = foundProducts.find((p) => p.id === prod.productId)!
+        return {
+          productId: product.id,
+          quantity: prod.quantity,
+          unitPrice: product.price,
+        }
+      })
+
+      const totalPrice = saledProductsData.reduce(
+        (total: number, prod: SaledProducts) => total + prod.quantity * prod.unitPrice,
+        0
+      )
       const sale = await Sale.create(
         {
           clientId,
-          totalPrice,
+          totalPrice: Number(totalPrice.toFixed(2)),
           saleDate: DateTime.now(),
         },
         { client: trx }
       )
 
-      for (const prod of products) {
-        await SaledProducts.create(
-          {
-            saleId: sale.id,
-            productId: prod.productId,
-            quantity: prod.quantity,
-          },
-          { client: trx }
-        )
-      }
+      await SaledProducts.createMany(
+        saledProductsData.map((prod: SaledProducts) => ({
+          saleId: sale.id,
+          productId: prod.productId,
+          quantity: prod.quantity,
+          unitPrice: prod.unitPrice,
+        })),
+        { client: trx }
+      )
 
       await trx.commit()
       return response.status(201).json(sale)
