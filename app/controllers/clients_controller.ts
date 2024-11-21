@@ -30,7 +30,7 @@ export default class ClientsController {
       .first()
 
     if (!client) {
-      return response.status(404).json({ error: 'Cliente não encontrado' })
+      return response.status(404).json({ error: 'Customer not found' })
     }
 
     return response.json(client)
@@ -47,7 +47,7 @@ export default class ClientsController {
       return response.status(201).json(client)
     } catch (error) {
       await trx.rollback()
-      return response.status(500).json({ error: 'Erro ao criar cliente', details: error.message })
+      return response.status(500).json({ error: 'Error creating client', details: error.message })
     }
   }
 
@@ -65,9 +65,7 @@ export default class ClientsController {
       return response.status(200).json(updatedClient)
     } catch (error) {
       await trx.rollback()
-      return response
-        .status(500)
-        .json({ error: 'Erro ao atualizar cliente', details: error.message })
+      return response.status(500).json({ error: 'Error updating client', details: error.message })
     }
   }
 
@@ -81,10 +79,10 @@ export default class ClientsController {
       await trx.commit()
       return response
         .status(200)
-        .json({ message: 'Cliente e vendas associadas excluídos com sucesso.' })
+        .json({ message: 'Customer and associated sales successfully deleted.' })
     } catch (error) {
       await trx.rollback()
-      return response.status(500).json({ error: 'Erro ao excluir cliente', details: error.message })
+      return response.status(500).json({ error: 'Error deleting customer', details: error.message })
     }
   }
 
@@ -101,7 +99,6 @@ export default class ClientsController {
    * Sincroniza as entidades relacionadas (Phones e Addresses).
    */
   private async syncRelatedEntities(client: Client, payload: any, transaction: any) {
-    // Sincroniza telefones
     if (payload.phones) {
       const phoneNumbers = Array.isArray(payload.phones) ? payload.phones : [payload.phones]
 
@@ -130,7 +127,6 @@ export default class ClientsController {
       }
     }
 
-    // Sincroniza endereços
     if (payload.addresses) {
       const existingAddress = await Address.query().where('clientId', client.id!).first()
 

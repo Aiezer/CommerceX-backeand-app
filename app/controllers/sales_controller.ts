@@ -20,7 +20,7 @@ export default class SalesController {
         const missingIds = productIds.filter(
           (id: number) => !foundProducts.some((product) => product.id === id)
         )
-        throw new Error(`Produtos com IDs ${missingIds.join(', ')} não foram encontrados`)
+        throw new Error(`Products with IDs ${missingIds.join(', ')} were not found`)
       }
 
       const saledProductsData = products.map((prod: SaledProducts) => {
@@ -59,7 +59,7 @@ export default class SalesController {
       return response.status(201).json(sale)
     } catch (error) {
       await trx.rollback()
-      return response.status(500).json({ error: 'Erro ao criar venda', details: error.message })
+      return response.status(500).json({ error: 'Error creating sale', details: error.message })
     }
   }
 }

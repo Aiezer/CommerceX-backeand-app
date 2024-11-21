@@ -9,7 +9,7 @@ export default class AuthController {
 
     const existingUser = await User.findBy('email', data.email)
     if (existingUser) {
-      return response.status(400).json({ error: 'E-mail já cadastrado' })
+      return response.status(400).json({ error: 'Email already exists' })
     }
 
     const user = await User.create(data)
@@ -28,7 +28,7 @@ export default class AuthController {
 
     return {
       type: 'bearer',
-      value: token.value!.release(),
+      token: token.value!.release(),
     }
   }
 }

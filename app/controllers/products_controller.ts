@@ -18,7 +18,7 @@ export default class ProductsController {
 
       return response.json(product)
     } catch (error) {
-      return this.handleError(response, 'Produto não encontrado')
+      return this.handleError(response, 'Product not found')
     }
   }
 
@@ -29,7 +29,7 @@ export default class ProductsController {
       const product = await Product.create(payload)
       return response.status(201).json(product)
     } catch (error) {
-      return this.handleError(response, 'Erro ao criar produto', error)
+      return this.handleError(response, 'Error creating product', error)
     }
   }
 
@@ -43,7 +43,7 @@ export default class ProductsController {
 
       return response.status(200).json(product)
     } catch (error) {
-      return this.handleError(response, 'Erro ao atualizar produto', error)
+      return this.handleError(response, 'Error updating product', error)
     }
   }
 
@@ -53,9 +53,9 @@ export default class ProductsController {
       product.deleted = true
       await product.save()
 
-      return response.status(200).json({ message: 'Produto excluído com sucesso' })
+      return response.status(200).json({ message: 'Product deleted successfully' })
     } catch (error) {
-      return this.handleError(response, 'Erro ao excluir produto', error)
+      return this.handleError(response, 'Error deleting product', error)
     }
   }
 
@@ -68,7 +68,7 @@ export default class ProductsController {
 
     return response.status(500).json({
       error: message,
-      details: error ? error.message : 'Erro inesperado',
+      details: error ? error.message : 'Unexpected error',
     })
   }
 }

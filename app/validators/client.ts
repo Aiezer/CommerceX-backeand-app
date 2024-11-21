@@ -24,7 +24,7 @@ export const updateClientValidator = vine.compile(
       .string()
       .regex(/^\d{11}$/)
       .optional(),
-    phones: vine.array(vine.string().mobile().optional()),
+    phones: vine.array(vine.string().mobile()).optional(),
     addresses: vine
       .object({
         street: vine.string().trim().maxLength(200),
