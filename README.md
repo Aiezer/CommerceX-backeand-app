@@ -110,7 +110,57 @@ commercex/
   <h2 id="documentacao">Documentação da API</h2>
   <h3>Documentação via Swagger UI</h3>
   <p>Após diversas tentativas de fazer a documentação via Swager, infelizmente não foi possível completar essa parte, diversos erros impossibilitaram a implementação do mesmo no contexto do Adonisjs6 </p>
-
+  <p>Como solução provisória, fiz uma implementação com o Swagger Editor que pode ser visualizado em:</p>
+  
+  <pre><a href="https://app.swaggerhub.com/apis/AiezerSantos/Commercex_docs/1.0.0">Documentação da API</a></pre>
+  
+  <h3>Endpoints Principais</h3>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Rota</th>
+        <th>Método</th>
+        <th>Descrição</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>/signup</td>
+        <td>POST</td>
+        <td>Cadastro de novos usuários.</td>
+      </tr>
+      <tr>
+        <td>/login</td>
+        <td>POST</td>
+        <td>Login e geração de token.</td>
+      </tr>
+      <tr>
+        <td>/clients</td>
+        <td>GET</td>
+        <td>Listar todos os clientes.</td>
+      </tr>
+      <tr>
+        <td>/clients</td>
+        <td>POST</td>
+        <td>Criar um novo cliente.</td>
+      </tr>
+      <tr>
+        <td>/products</td>
+        <td>GET</td>
+        <td>Listar todos os produtos.</td>
+      </tr>
+      <tr>
+        <td>/products</td>
+        <td>POST</td>
+        <td>Criar um novo produto.</td>
+      </tr>
+      <tr>
+        <td>/sales</td>
+        <td>POST</td>
+        <td>Registrar uma nova venda.</td>
+      </tr>
+    </tbody>
+  </table>
   
 </body>
 </html>
