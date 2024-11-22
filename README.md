@@ -22,8 +22,6 @@
     <li><a href="#execucao">Como Executar o Projeto</a></li>
     <li><a href="#estrutura">Estrutura do Projeto</a></li>
     <li><a href="#documentacao">Documentação da API</a></li>
-    <li><a href="#contribuicao">Contribuição</a></li>
-    <li><a href="#licenca">Licença</a></li>
   </ul>
 
   <hr>
@@ -45,7 +43,6 @@
     <li><a href="https://nodejs.org/">Node.js</a></li>
     <li><a href="https://www.typescriptlang.org/">TypeScript</a></li>
     <li><a href="https://www.mysql.com/">MySQL</a></li>
-    <li><a href="https://swagger.io/tools/swagger-ui/">Swagger UI</a> para documentação</li>
   </ul>
 
   <hr>
