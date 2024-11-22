@@ -109,10 +109,12 @@ commercex/
 
   <h2 id="documentacao">Documentação da API</h2>
   <h3>Documentação via Swagger UI</h3>
-  <p>Após diversas tentativas de fazer a documentação via Swager, infelizmente não foi possível completar essa parte, diversos erros impossibilitaram a implementação do mesmo no contexto do Adonisjs6 </p>
-  <p>Como solução provisória, fiz uma implementação com o Swagger Editor que pode ser visualizado em:</p>
+  <p>Após diversas tentativas de implementar a documentação utilizando o Swagger de maneira tradicional, enfrentamos dificuldades técnicas que inviabilizaram sua integração completa no contexto do AdonisJS 6 devido a problemas de compatibilidade 
+ e erros inesperados.</p> 
+
+  <p>Como alternativa, foi utilizada uma solução provisória por meio do Swagger Editor, cuja documentação pode ser acessada em:</p>
   
-  <pre><a href="https://app.swaggerhub.com/apis/AiezerSantos/Commercex_docs/1.0.0">Documentação da API</a></pre>
+  <pre><a href="https://app.swaggerhub.com/apis-docs/AiezerSantos/Commercex_docs/1.0.0">Documentação da API</a></pre>
   
   <h3>Endpoints Principais</h3>
   <table border="1">
